@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shopping_app/global_variable.dart';
+import 'package:provider/provider.dart';
+import 'package:shopping_app/cart_provider.dart';
+// import 'package:shopping_app/global_variable.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -11,9 +13,11 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> {
   @override
   Widget build(BuildContext context) {
+    // final cart = context.watch<CartProvider>().cart;
+    final cart = Provider.of<CartProvider>(context).cart;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cart'),
+        title: const Text('Cart'),
       ),
       body: ListView.builder(
           itemCount: cart.length,
@@ -28,7 +32,48 @@ class _CartPageState extends State<CartPage> {
                 radius: 30,
               ),
               trailing: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text(
+                            'Delete Product',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          content: const Text(
+                              'Are you sure to remove the product from cart?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text(
+                                'No',
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                ),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                // context.read<CartProvider>().removeProduct(cartItem);
+                                Provider.of<CartProvider>(context,
+                                        listen: false)
+                                    .removeProduct(cartItem);
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text(
+                                'Yes',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      });
+                },
                 icon: const Icon(
                   Icons.delete,
                   color: Colors.red,
